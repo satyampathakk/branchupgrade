@@ -106,6 +106,8 @@ def allocate_branches(students, branch_seat_count):
                         allocated_students[student] = preference
                         branch_seat_count[branch_name] -= 1
                         break
+                else:
+                    allocated_students[student] = None
 
     return allocated_students
 
