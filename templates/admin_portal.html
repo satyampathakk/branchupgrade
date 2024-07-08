@@ -1,0 +1,270 @@
+<!-- core/templates/core/admin_portal.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Portal</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+  <style>/* styles.css */
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    
+    h1, h2 {
+      color: #333;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #f2f2f2;
+    }
+    
+    form {
+      border: 2px solid #4CAF50;
+      border-radius: 5px;
+      padding: 20px;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+    
+    form table {
+      width: 100%;
+      border: none;
+    }
+    
+    form th, form td {
+      border: none;
+      padding: 5px;
+    }
+    
+    form input[type="number"] {
+      width: 100px;
+      padding: 5px;
+      margin-right: 10px;
+    }
+    
+    form button {
+      padding: 10px 20px;
+      color: #fff;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    
+    form button:hover {
+      background-color: #45a049;
+    }
+    
+    p {
+      color: #555;
+    }
+    </style>
+</head>
+<body>
+  <h1>Admin Portal</h1>
+
+  <h2>Student Details</h2>
+  <table id="studentTable">
+    <thead>
+      <tr>
+        <th>Roll No.</th>
+        <th>Name</th>
+        <th>CGPA</th>
+        <th>JEE Rank</th>
+        <th>Category</th>
+        <th>Preference 1</th>
+        <th>Preference 2</th>
+        <th>Preference 3</th>
+        <th>Allocated Branch</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+      <tr>
+        <td>{{ student.roll_no }}</td>
+        <td>{{ student.user.get_full_name }}</td>
+        <td>{{ student.cgpa }}</td>
+        <td>{{ student.jee_rank }}</td>
+        <td>{{ student.get_category_display }}</td>
+        <td>{{ student.get_preference1_display }}</td>
+        <td>{{ student.get_preference2_display }}</td>
+        <td>{{ student.get_preference3_display }}</td>
+        <td>{{ student.get_allocated_branch_display }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <h2>Vacancy Table</h2>
+  <table id="vacancyTable">
+    <thead>
+      <tr>
+        <th>Branch Name</th>
+        <th>Open</th>
+        <th>OPEN-PWD</th>
+        <th>EWS</th>
+        <th>EWS-PWD</th>
+        <th>SC</th>
+        <th>SC-PWD</th>
+        <th>ST</th>
+        <th>ST-PWD</th>
+        <th>OBC-NCL</th>
+        <th>OBC-NCL-PWD</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for vacancy in vacancies %}
+      <tr>
+        <td>{{ vacancy.get_branch_name_display }}</td>
+        <td>{{ vacancy.open_seats }}</td>
+        <td>{{ vacancy.open_pwd_seats }}</td>
+        <td>{{ vacancy.ews_seats }}</td>
+        <td>{{ vacancy.ews_pwd_seats }}</td>
+        <td>{{ vacancy.sc_seats }}</td>
+        <td>{{ vacancy.sc_pwd_seats }}</td>
+        <td>{{ vacancy.st_seats }}</td>
+        <td>{{ vacancy.st_pwd_seats }}</td>
+        <td>{{ vacancy.obc_ncl_seats }}</td>
+        <td>{{ vacancy.obc_ncl_pwd_seats }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <h2>Update Vacancy</h2>
+  <form method="post" action="{% url 'update_vacancy' %}" class="update-form">
+    {% csrf_token %}
+    <table id="updateVacancyTable">
+      <thead>
+        <tr>
+          <th>Branch Name</th>
+          <th>Open</th>
+          <th>OPEN-PWD</th>
+          <th>EWS</th>
+          <th>EWS-PWD</th>
+          <th>SC</th>
+          <th>SC-PWD</th>
+          <th>ST</th>
+          <th>ST-PWD</th>
+          <th>OBC-NCL</th>
+          <th>OBC-NCL-PWD</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Computer Science and Engineering</td>
+          <td><input type="number" name="open_seats_cse" value="0" required></td>
+          <td><input type="number" name="open_pwd_seats_cse" value="0" required></td>
+          <td><input type="number" name="ews_seats_cse" value="0" required></td>
+          <td><input type="number" name="ews_pwd_seats_cse" value="0" required></td>
+          <td><input type="number" name="sc_seats_cse" value="0" required></td>
+          <td><input type="number" name="sc_pwd_seats_cse" value="0" required></td>
+          <td><input type="number" name="st_seats_cse" value="0" required></td>
+          <td><input type="number" name="st_pwd_seats_cse" value="0" required></td>
+          <td><input type="number" name="obc_ncl_seats_cse" value="0" required></td>
+          <td><input type="number" name="obc_ncl_pwd_seats_cse" value="0" required></td>
+        </tr>
+        <tr>
+          <td>Mechanical Engineering</td>
+          <td><input type="number" name="open_seats_me" value="0" required></td>
+          <td><input type="number" name="open_pwd_seats_me" value="0" required></td>
+          <td><input type="number" name="ews_seats_me" value="0" required></td>
+          <td><input type="number" name="ews_pwd_seats_me" value="0" required></td>
+          <td><input type="number" name="sc_seats_me" value="0" required></td>
+          <td><input type="number" name="sc_pwd_seats_me" value="0" required></td>
+          <td><input type="number" name="st_seats_me" value="0" required></td>
+          <td><input type="number" name="st_pwd_seats_me" value="0" required></td>
+          <td><input type="number" name="obc_ncl_seats_me" value="0" required></td>
+          <td><input type="number" name="obc_ncl_pwd_seats_me" value="0" required></td>
+        </tr>
+        <tr>
+          <td>Electrical Engineering</td>
+          <td><input type="number" name="open_seats_ee" value="0" required></td>
+          <td><input type="number" name="open_pwd_seats_ee" value="0" required></td>
+          <td><input type="number" name="ews_seats_ee" value="0" required></td>
+          <td><input type="number" name="ews_pwd_seats_ee" value="0" required></td>
+          <td><input type="number" name="sc_seats_ee" value="0" required></td>
+          <td><input type="number" name="sc_pwd_seats_ee" value="0" required></td>
+          <td><input type="number" name="st_seats_ee" value="0" required></td>
+          <td><input type="number" name="st_pwd_seats_ee" value="0" required></td>
+          <td><input type="number" name="obc_ncl_seats_ee" value="0" required></td>
+          <td><input type="number" name="obc_ncl_pwd_seats_ee" value="0" required></td>
+        </tr>
+        <tr>
+          <td>Civil Engineering</td>
+          <td><input type="number" name="open_seats_ce" value="0" required></td>
+          <td><input type="number" name="open_pwd_seats_ce" value="0" required></td>
+          <td><input type="number" name="ews_seats_ce" value="0" required></td>
+          <td><input type="number" name="ews_pwd_seats_ce" value="0" required></td>
+          <td><input type="number" name="sc_seats_ce" value="0" required></td>
+          <td><input type="number" name="sc_pwd_seats_ce" value="0" required></td>
+          <td><input type="number" name="st_seats_ce" value="0" required></td>
+          <td><input type="number" name="st_pwd_seats_ce" value="0" required></td>
+          <td><input type="number" name="obc_ncl_seats_ce" value="0" required></td>
+          <td><input type="number" name="obc_ncl_pwd_seats_ce" value="0" required></td>
+        </tr>
+        <tr>
+          <td>Chemical Engineering</td>
+          <td><input type="number" name="open_seats_che" value="0" required></td>
+          <td><input type="number" name="open_pwd_seats_che" value="0" required></td>
+          <td><input type="number" name="ews_seats_che" value="0" required></td>
+          <td><input type="number" name="ews_pwd_seats_che" value="0" required></td>
+          <td><input type="number" name="sc_seats_che" value="0" required></td>
+          <td><input type="number" name="sc_pwd_seats_che" value="0" required></td>
+          <td><input type="number" name="st_seats_che" value="0" required></td>
+          <td><input type="number" name="st_pwd_seats_che" value="0" required></td>
+          <td><input type="number" name="obc_ncl_seats_che" value="0" required></td>
+          <td><input type="number" name="obc_ncl_pwd_seats_che" value="0" required></td>
+        </tr>
+        <tr>
+          <td>Electronics and Communication Engineering</td>
+          <td><input type="number" name="open_seats_ece" value="0" required></td>
+          <td><input type="number" name="open_pwd_seats_ece" value="0" required></td>
+          <td><input type="number" name="ews_seats_ece" value="0" required></td>
+          <td><input type="number" name="ews_pwd_seats_ece" value="0" required></td>
+          <td><input type="number" name="sc_seats_ece" value="0" required></td>
+          <td><input type="number" name="sc_pwd_seats_ece" value="0" required></td>
+          <td><input type="number" name="st_seats_ece" value="0" required></td>
+          <td><input type="number" name="st_pwd_seats_ece" value="0" required></td>
+          <td><input type="number" name="obc_ncl_seats_ece" value="0" required></td>
+          <td><input type="number" name="obc_ncl_pwd_seats_ece" value="0" required></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="submit">Update Seats</button>
+  </form>
+  <form method="post" action="{% url 'admin_portal' %}">
+    {% csrf_token %}
+    <button type="submit" name="publish">Publish Results</button>
+  </form>
+
+  {% if message %}
+  <p>{{ message }}</p>
+  {% endif %}
+  
+  <a href="{% url 'logout' %}">Logout</a>
+  <script src="{% static 'scripts.js' %}"></script>
+</body>
+</html>
