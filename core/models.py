@@ -26,6 +26,7 @@ CATEGORY_CHOICES = [
 class Student(models.Model):
     roll_no = models.CharField(max_length=20, unique=True)
     cgpa = models.FloatField()
+    email=models.CharField(max_length=50,default='')
     jee_rank = models.IntegerField()
     category = models.CharField(max_length=50)
     preference1 = models.CharField(max_length=50, choices=BRANCH_CHOICES, blank=True, null=True)
@@ -33,8 +34,6 @@ class Student(models.Model):
     preference3 = models.CharField(max_length=50, choices=BRANCH_CHOICES, blank=True, null=True)
     allocated_branch = models.CharField(max_length=50, choices=BRANCH_CHOICES, blank=True, null=True)
 
-    def __str__(self):
-        return self.user.username
 
 class Vacancy(models.Model):
     branch_name = models.CharField(max_length=50, choices=BRANCH_CHOICES, unique=True)
@@ -48,6 +47,11 @@ class Vacancy(models.Model):
     st_pwd_seats = models.IntegerField(default=0)
     obc_ncl_seats = models.IntegerField(default=0)
     obc_ncl_pwd_seats = models.IntegerField(default=0)
-
     def __str__(self):
         return self.branch_name
+    def __str__(self):
+        return self.branch_name
+    def total_seats(self):
+        return (self.open_seats + self.open_pwd_seats + self.ews_seats + self.ews_pwd_seats +
+                self.sc_seats + self.sc_pwd_seats + self.st_seats + self.st_pwd_seats +
+                self.obc_ncl_seats + self.obc_ncl_pwd_seats)

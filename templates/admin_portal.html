@@ -104,7 +104,7 @@
       {% for student in students %}
       <tr>
         <td>{{ student.roll_no }}</td>
-        <td>{{ student.user.get_full_name }}</td>
+        <td>{{ student.email }}</td>
         <td>{{ student.cgpa }}</td>
         <td>{{ student.jee_rank }}</td>
         <td>{{ student.get_category_display }}</td>

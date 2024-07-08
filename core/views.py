@@ -4,11 +4,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .models import Student, BRANCH_CHOICES, CATEGORY_CHOICES, Vacancy
+from django.db.models import F
 
 def update_preferences(request):
     if request.method == 'POST':
         roll_no = request.POST.get('roll_no')
         cgpa = request.POST.get('cgpa')
+        email=request.POST.get('email')
         jee_rank = request.POST.get('jee_rank')
         category = request.POST.get('category')
         preference1 = request.POST.get('preference1')
@@ -32,6 +34,7 @@ def update_preferences(request):
             message = "Student created and preferences set successfully."
 
         student.cgpa = cgpa
+        student.email=email
         student.jee_rank = jee_rank
         student.category = category
         student.preference1 = preference1
@@ -59,14 +62,21 @@ def login_view(request):
     return render(request, 'login.html')
 
 
+from django.db.models import Sum
+
 @login_required
 def admin_portal(request):
     students = Student.objects.all()
     vacancies = Vacancy.objects.all()
 
     if request.method == 'POST' and 'publish' in request.POST:
-        # Logic to publish results and allocate branches
-        allocated_students = allocate_branches(students, vacancies)
+        # Create a dictionary for total seats available for each branch
+        branch_seat_count = {
+            vacancy.branch_name: vacancy.total_seats()
+            for vacancy in vacancies
+        }
+
+        allocated_students = allocate_branches(students, branch_seat_count)
 
         # Update the allocated branch for each student
         for student, branch in allocated_students.items():
@@ -80,39 +90,25 @@ def admin_portal(request):
     return render(request, 'admin_portal.html', {
         'students': students, 'vacancies': vacancies
     })
-
-def allocate_branches(students, vacancies):
-    # Logic to allocate branches based on CGPA criteria
+def allocate_branches(students, branch_seat_count):
     allocated_students = {}
 
     # Sort students by CGPA descending
     sorted_students = sorted(students, key=lambda s: s.cgpa, reverse=True)
 
-    # Iterate over sorted students and allocate branches
     for student in sorted_students:
-        for vacancy in vacancies:
-            if can_allocate(student, vacancy):
-                allocated_students[student] = vacancy.branch_name
-                # Reduce the available seats for the allocated branch
-                update_vacancy(vacancy)
-                break  # Move to the next student
+        preferences = [student.preference1, student.preference2, student.preference3]
+        for preference in preferences:
+            for branch_name, seats in branch_seat_count.items():
+                print(branch_name,preference)
+                if preference and preference.lower() in branch_name.lower():
+                    if seats > 0:
+                        allocated_students[student] = preference
+                        branch_seat_count[branch_name] -= 1
+                        break
 
     return allocated_students
 
-def can_allocate(student, vacancy):
-    # Check if the student meets the criteria for the vacancy
-    if student.allocated_branch or student.preference1:
-        return False
-    if student.preference1 not in vacancy.branch_name:
-        return False
-    return True
-
-def update_vacancy(vacancy):
-    # Reduce the available seats for the allocated branch
-    vacancy.open_seats -= 1
-
-    # Save the updated vacancy instance
-    vacancy.save()
 
 def logout_view(request):
     logout(request)
